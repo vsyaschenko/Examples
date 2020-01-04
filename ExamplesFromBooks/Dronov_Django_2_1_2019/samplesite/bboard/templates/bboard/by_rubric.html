@@ -3,9 +3,11 @@
     <head>
         <meta http-equiv="Content-Type"
         content="text/html; charset=utf-8">
+        <title>{{ current_rubric.name }}</title>
     </head>
     <body>
         <h1>Объявления</h1>
+        <h2>Рубрика: {{ current_rubric.name }}</h2>
         <div>
             <a href="/bboard/">Главная</a>
             {% for rubric in rubrics %}
@@ -16,8 +18,7 @@
         <div>
             <h2>{{ bb.title }}</h2>
             <p>{{ bb.content }}</p>
-            <p><a href="/bboard/{{ bb.rubric.pk }}">{{ bb.rubric.name }}</a></p>
-            <p>{{ bb.pudlished|date:"d.m.Y H:i:s" }}</p>
+            <p>{{ bb.purlished|date:"d.m.Y H:i:s" }}</p>
         </div>
         {% endfor %}
     </body>
