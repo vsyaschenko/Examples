@@ -18,7 +18,11 @@ from django.urls import path, include
 
 from bboard.views import index
 
+#Ссылки. Делает доступными запросы запросы:
+#localhost:8000\admin
+#localhost:8000\bboard
+#...и др.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('bboard/', include('bboard.urls')),
+    path('bboard/', include('bboard.urls')),#список разделов, реализует иерархию разделов
 ]
