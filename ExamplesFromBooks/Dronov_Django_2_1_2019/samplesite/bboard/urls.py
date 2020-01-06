@@ -4,6 +4,6 @@ from .views import index, by_rubric
 
 #Ссылки
 urlpatterns = [
-    path('<int:rubric_id>/', by_rubric),
-    path('', index)#Главная вызывает метод index
+    path('<int:rubric_id>/', by_rubric, name='by_rubric'),
+    path('', index, name='index')#Главная вызывает метод index
 ]
