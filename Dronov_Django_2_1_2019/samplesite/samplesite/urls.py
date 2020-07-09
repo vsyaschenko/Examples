@@ -16,13 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from bboard.views import index
-
-#Ссылки. Делает доступными запросы запросы:
-#localhost:8000\admin
-#localhost:8000\bboard
-#...и др.
+# список маршрутов
+# элементом списка является результат функции 
+# path(<имя маршрута>, <функция-контроллер>) - прямой маршрут
+# path(<имя маршрута, <include(<имя приложения модуля urls>)>) - вложенный 
+# список маршрутов 
+# модуль приложения urls нужно создать вручную с аналогичной структурой 
 urlpatterns = [
+    path('bboard/', include('bboard.urls')),
     path('admin/', admin.site.urls),
-    path('bboard/', include('bboard.urls')),#список разделов, реализует иерархию разделов
 ]
