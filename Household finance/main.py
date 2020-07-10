@@ -32,6 +32,18 @@ class Main(tk.Frame):
                                     image=self.add_img)
         # упаковываем кнопку с вырвавниванием по левому краю
         btn_open_dialog.pack(side=tk.LEFT) 
+        
+        self.update_img = tk.PhotoImage(file='add.gif')
+        btn_edit_dialog = tk.Button(toolbar, 
+                                    text='Редактировать',
+                                    command=self.open_update_dialog,
+                                    bg='#DDD',
+                                    bd=0,
+                                    compound=tk.TOP,
+                                    image=self.update_img)
+        btn_edit_dialog.pack(side=tk.LEFT)
+
+        
         # добавляем таблицу
         columns = ('id', 'description', 'cost', 'total')
         self.tree = ttk.Treeview(self, 
@@ -55,15 +67,28 @@ class Main(tk.Frame):
         self.db.insert_data(description, costs, total)
         self.view_records()
 
+    def update_record(self, description, costs, total):
+        self.db.c.execute('''
+        UPDATE finance
+        SET description=?, costs=?, total=?
+        WHERE id=?''',
+        (description, costs, total, self.tree.set(self.tree.selection()[0], 
+                                                                    '#1')))
+        self.db.conn.commit()
+        self.view_records()
+
     def view_records(self):
         self.db.c.execute('''SELECT * 
                              FROM finance''')
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
 
+    def open_update_dialog(self):
+        Update()
+
     def open_dialog(self):
-        Child()
-        
+        Child() 
+
 # класс дочернего окна
 class Child(tk.Toplevel):
     def __init__(self):
@@ -101,9 +126,9 @@ class Child(tk.Toplevel):
         btn_cansel = ttk.Button(self, text='Закрыть', command=self.destroy)
         btn_cansel.place(x=300, y=170)
 
-        btn_ok = ttk.Button(self, text='Добавить')
-        btn_ok.place(x=220, y=170)
-        btn_ok.bind('<Button-1>', 
+        self.btn_ok = ttk.Button(self, text='Добавить')
+        self.btn_ok.place(x=220, y=170)
+        self.btn_ok.bind('<Button-1>', 
                     lambda event: self.view.records(self.enty_description.get(),
                                                     self.combobox.get(),
                                                     self.enty_money.get()))
@@ -112,6 +137,22 @@ class Child(tk.Toplevel):
         self.grab_set()
         # удерживает фокус на окне, что бы окно было поверх основного
         self.focus_set()
+
+class Update(Child):
+    def __init__(self):
+        super().__init__()
+        self.init_edit()
+        self.view = app
+    
+    def init_edit(self):
+        self.title('Редактировать позиции')
+        btn_edit = ttk.Button(self, text='Редактировать')
+        btn_edit.place(x=205, y=170)
+        btn_edit.bind('<Button-1>', 
+        lambda event: self.view.update_record(self.enty_description.get(),
+                                                self.combobox.get(),
+                                                self.enty_money.get()))
+        self.btn_ok.destroy()
 
 class DB:
     def __init__(self):
